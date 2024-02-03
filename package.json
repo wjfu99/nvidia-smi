@@ -1,5 +1,5 @@
 {
-    "name": "nvidia-smi-memory+",
+    "name": "nvidia-smi-memory-plus",
     "displayName": "nvidia-smi-memory+",
     "description": "Show GPU memory occupancy rate on status bar",
     "icon": "icon.png",
