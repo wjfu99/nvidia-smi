@@ -1,7 +1,7 @@
 {
     "name": "nvidia-status-bar",
     "displayName": "Nvidia Status Bar",
-    "description": "Show GPU memory occupancy rate on status bar",
+    "description": "Elegantly display GPU utilisation and real memory consumption rate in vscode status bar.",
     "icon": "icon.png",
     "version": "1.0.0",
     "publisher": "wjfu99",
