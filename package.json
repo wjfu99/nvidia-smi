@@ -1,12 +1,12 @@
 {
-    "name": "nvidia-smi-memory-plus",
-    "displayName": "nvidia-smi-memory+",
+    "name": "nvidia-status-bar",
+    "displayName": "Nvidia Status Bar",
     "description": "Show GPU memory occupancy rate on status bar",
     "icon": "icon.png",
-    "version": "0.2.2",
+    "version": "1.0.0",
     "publisher": "wjfu99",
     "license": "MIT",
-    "repository": "https://github.com/wjfu99/nvidia-smi",
+    "repository": "https://github.com/wjfu99/nvidia-status-bar",
     "engines": {
         "vscode": "^1.19.0"
     },
