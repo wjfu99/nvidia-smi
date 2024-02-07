@@ -24,7 +24,7 @@
             "properties": {
                 "nvidia-smi.drawtype": {
                     "type": "string",
-                    "default": "circle",
+                    "default": "digit",
                     "description": "GPU indicator styles",
                     "enum": [
                         "circle",
