@@ -3,7 +3,7 @@
     "displayName": "nvidia-smi-memory+",
     "description": "Show GPU memory occupancy rate on status bar",
     "icon": "icon.png",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "publisher": "wjfu99",
     "license": "MIT",
     "repository": "https://github.com/wjfu99/nvidia-smi",

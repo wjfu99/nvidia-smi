@@ -157,8 +157,8 @@ class NvidiaSmi {
         }
 
         // Update the status bar
-        this._statusBarItem.text = levelChars.join("")
-        this._statusBarItem.tooltip = levels.map(val => `${val} %`).join("\n")
+        this._statusBarItem.text = "GPU-Mem: " + levelChars.join(",")
+        this._statusBarItem.tooltip = levels.map((val, index) => `GPU${index}: ${val} %`).join("\n");
     }
 
     public async stopNvidiaSmi() {
