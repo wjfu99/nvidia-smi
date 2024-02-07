@@ -31,7 +31,8 @@ const drawtypes = {
     tiao: tiaoChars,
     bing: bingChars
 }
-const cmd = `nvidia-smi --query-gpu=memory.used,memory.total --format=csv | sed '1d;s/ MiB//g' | awk -F, '{printf "%i\\n", \$1/\$2*100}'`
+const cmd_gpu = `nvidia-smi --query-gpu=utilization.gpu --format=csv | sed '1d' | awk -F, '{printf "%i\\n", \$1}'`
+const cmd_mem = `nvidia-smi --query-gpu=memory.used,memory.total --format=csv | sed '1d;s/ MiB//g' | awk -F, '{printf "%i\\n", \$1/\$2*100}'`
 
 // This method is called when your extension is activated. Activation is
 // controlled by the activation events defined in package.json.
@@ -43,7 +44,7 @@ export async function activate(context: ExtensionContext) {
     // create a new word counter
     let nvidiasmi = new NvidiaSmi(0)
     try {
-        var res = await exec(cmd, { timeout: 999 })
+        var res = await exec(cmd_gpu, { timeout: 999 })
         var nCard = res.stdout.split("\n").filter(val => val).length
         if (nCard > 0) {
             nvidiasmi.nCard = nCard
@@ -145,11 +146,14 @@ class NvidiaSmi {
 
         try {
             this.lock = true
-            var res = await exec(cmd, { timeout: 999 })
-            var levels = res.stdout.split("\n").filter(val => val)
+            var res_gpu = await exec(cmd_gpu, { timeout: 999 })
+            var res_mem = await exec(cmd_mem, { timeout: 999 })
+            var levels_gpu = res_gpu.stdout.split("\n").filter(val => val)
+            var levels_mem = res_mem.stdout.split("\n").filter(val => val)
             var chars = this.indicator
             var nlevel = chars.length - 1
-            var levelChars = levels.map(val => chars[Math.ceil((Number(val) / 100) * nlevel)])
+            var levelChars_gpu = levels_gpu.map(val => chars[Math.ceil((Number(val) / 100) * nlevel)])
+            var levelChars_mem = levels_mem.map(val => chars[Math.ceil((Number(val) / 100) * nlevel)])
             this.lock = false
         } catch (e) {
             console.log(e)
@@ -157,8 +161,9 @@ class NvidiaSmi {
         }
 
         // Update the status bar
-        this._statusBarItem.text = "$(nvidia-logo) | $(gpu-memory)" + " " + levelChars.join(",")
-        this._statusBarItem.tooltip = levels.map((val, index) => `GPU${index}: ${val} %`).join("\n");
+        this._statusBarItem.text = "$(nvidia-logo) | $(gpu-usage)" + " " + levelChars_gpu.join(",") + " | $(gpu-memory)" + " " + levelChars_mem.join(",");
+        let levels_zipped = levels_gpu.map((val, index) => [val, levels_mem[index]])
+        this._statusBarItem.tooltip = levels_zipped.map((val, index) => `GPU${index}: GPU-Usage: ${val[0]}%, GPU-Memory: ${val[1]}%`).join("\n");
     }
 
     public async stopNvidiaSmi() {
