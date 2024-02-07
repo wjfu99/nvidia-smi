@@ -157,7 +157,7 @@ class NvidiaSmi {
         }
 
         // Update the status bar
-        this._statusBarItem.text = "GPU-Mem: " + levelChars.join(",")
+        this._statusBarItem.text = "$(nvidia-logo) | $(gpu-memory)" + " " + levelChars.join(",")
         this._statusBarItem.tooltip = levels.map((val, index) => `GPU${index}: ${val} %`).join("\n");
     }
 

@@ -57,7 +57,30 @@
                 "command": "extension.start_nvidia-smi",
                 "title": "Start nvidia-smi"
             }
-        ]
+        ],
+        "icons": {
+            "nvidia-logo": {
+                "description": "nvidia logo",
+                "default": {
+                    "fontPath": "icons/icomoon.woff",
+                    "fontCharacter": "\\E900"
+                }
+            },
+            "gpu-memory": {
+                "description": "gpu memory",
+                "default": {
+                    "fontPath": "icons/icomoon.woff",
+                    "fontCharacter": "\\E901"
+                }
+            },
+            "gpu-usage": {
+                "description": "gpu usage",
+                "default": {
+                    "fontPath": "icons/icomoon.woff",
+                    "fontCharacter": "\\E902"
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
