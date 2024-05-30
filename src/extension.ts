@@ -31,8 +31,14 @@ const drawtypes = {
     tiao: tiaoChars,
     bing: bingChars
 }
-const cmd_gpu = `nvidia-smi --query-gpu=utilization.gpu --format=csv | sed '1d' | awk -F, '{printf "%i\\n", \$1}'`
-const cmd_mem = `nvidia-smi --query-gpu=memory.used,memory.total --format=csv | sed '1d;s/ MiB//g' | awk -F, '{printf "%i\\n", \$1/\$2*100}'`
+const cmd_gpu = `if [ $(command -v nvidia-smi &> /dev/null) ]; then 
+nvidia-smi --query-gpu=utilization.gpu --format=csv | sed '1d' | awk -F, '{printf "%i\\n", \$1}'; 
+else rocm-smi --alldevices --showuse --csv | sed '1d;$d' | awk -F, '{printf "%i\\n", $1}'; 
+fi`
+const cmd_mem = `if [ $(command -v nvidia-smi &> /dev/null) ]; then 
+nvidia-smi --query-gpu=memory.used,memory.total --format=csv | sed '1d;s/ MiB//g' | awk -F, '{printf "%i\\n", \$1/\$2*100}'; 
+else rocm-smi --alldevices --showmeminfo VRAM  --csv | sed '1d;$d' | awk -F, '{printf "%i\\n", $3 / $2 * 100}'; 
+fi`
 
 // This method is called when your extension is activated. Activation is
 // controlled by the activation events defined in package.json.
@@ -45,6 +51,8 @@ export async function activate(context: ExtensionContext) {
     let nvidiasmi = new NvidiaSmi(0)
     try {
         var res = await exec(cmd_gpu, { timeout: 999 })
+        console.log('res=')
+        console.log(res)
         var nCard = res.stdout.split("\n").filter(val => val).length
         if (nCard > 0) {
             nvidiasmi.nCard = nCard
