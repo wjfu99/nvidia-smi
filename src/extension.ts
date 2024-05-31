@@ -33,7 +33,7 @@ const drawtypes = {
 }
 const cmd_gpu = `if [ $(command -v nvidia-smi &> /dev/null) ]; then 
 nvidia-smi --query-gpu=utilization.gpu --format=csv | sed '1d' | awk -F, '{printf "%i\\n", \$1}'; 
-else rocm-smi --alldevices --showuse --csv | sed '1d;$d' | awk -F, '{printf "%i\\n", $1}'; 
+else rocm-smi --alldevices --showuse --csv | sed '1d;$d' | awk -F, '{printf "%i\\n", $2}'; 
 fi`
 const cmd_mem = `if [ $(command -v nvidia-smi &> /dev/null) ]; then 
 nvidia-smi --query-gpu=memory.used,memory.total --format=csv | sed '1d;s/ MiB//g' | awk -F, '{printf "%i\\n", \$1/\$2*100}'; 
