@@ -2,6 +2,10 @@
 
 Elegantly display **NVIDIA** and **AMD** GPU utilisation and real memory consumption rate in vscode status bar.
 
+## AMD GPU Support
+
+![amd-status-bar GPU stats shown](images/amd-status-bar.png)
+
 ## Compact Status Bar
 Display the tens digit of the occupancy rate, or use icons such as bar and pie.
 ![nvidia-status-bar GPU stats shown](images/nvidia-status-bar.png)

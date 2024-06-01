@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "nvidia-status-bar" extension will be documented in this file.
 
+## 2.0.0
+- Totally support AMD GPU with the specific icon
+
 ## 1.3.0
 - Add pull down menu for select GPU type
 
