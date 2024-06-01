@@ -98,6 +98,7 @@ class NvidiaSmi {
     private gputype: string
     private _cmd_gpu: string
     private _cmd_mem: string
+    private _gpu_icon: string
     private _patience: number
     public lock: boolean
 
@@ -150,6 +151,14 @@ class NvidiaSmi {
         this._cmd_mem = cmd
     }
 
+    get gpu_icon(): string {
+        return this._gpu_icon
+    }
+
+    set gpu_icon(icon: string) {
+        this._gpu_icon = icon
+    }
+
     public decPatience() {
         if (this.hasPatience) {
             this._patience -= 1
@@ -170,9 +179,11 @@ class NvidiaSmi {
         if (gputype == "NVIDIA") {
             this.cmd_gpu = `nvidia-smi --query-gpu=utilization.gpu --format=csv | sed '1d' | awk -F, '{printf "%i\\n", \$1}'`
             this.cmd_mem = `nvidia-smi --query-gpu=memory.used,memory.total --format=csv | sed '1d;s/ MiB//g' | awk -F, '{printf "%i\\n", \$1/\$2*100}'`
+            this.gpu_icon = "$(nvidia-logo)"
         } else if (gputype == "AMD") {
             this.cmd_gpu = `rocm-smi --alldevices --showuse --csv | sed '1d;$d' | awk -F, '{printf "%i\\n", $2}'`
             this.cmd_mem = `rocm-smi --alldevices --showmeminfo VRAM  --csv | sed '1d;$d' | awk -F, '{printf "%i\\n", $3 / $2 * 100}'`
+            this.gpu_icon = "$(amd-logo)"
         }
     }
 
@@ -217,7 +228,7 @@ class NvidiaSmi {
         }
 
         // Update the status bar
-        this._statusBarItem.text = "$(nvidia-logo) | $(gpu-usage)" + " " + levelChars_gpu.join(",") + " | $(gpu-memory)" + " " + levelChars_mem.join(",");
+        this._statusBarItem.text = this.gpu_icon + " " + "| $(gpu-usage)" + " " + levelChars_gpu.join(",") + " | $(gpu-memory)" + " " + levelChars_mem.join(",");
         let levels_zipped = levels_gpu.map((val, index) => [val, levels_mem[index]])
         this._statusBarItem.tooltip = levels_zipped.map((val, index) => `GPU${index}: GPU-Usage: ${val[0]}%, GPU-Memory: ${val[1]}%`).join("\n");
     }

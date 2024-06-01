@@ -75,6 +75,13 @@
                     "fontCharacter": "\\E900"
                 }
             },
+            "amd-logo": {
+                "description": "amd logo",
+                "default": {
+                    "fontPath": "icons/icomoon.woff",
+                    "fontCharacter": "\\E903"
+                }
+            },
             "gpu-memory": {
                 "description": "gpu memory",
                 "default": {
