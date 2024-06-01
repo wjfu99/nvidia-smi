@@ -41,6 +41,15 @@
                         "tiao",
                         "bing"
                     ]
+                },
+                "nvidia-smi.gputype": {
+                    "type": "string",
+                    "default": "NVIDIA",
+                    "description": "GPU types",
+                    "enum": [
+                        "NVIDIA",
+                        "AMD"
+                    ]
                 }
             }
         },

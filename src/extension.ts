@@ -50,7 +50,7 @@ export async function activate(context: ExtensionContext) {
     // create a new word counter
     let nvidiasmi = new NvidiaSmi(0)
     try {
-        var res = await exec(cmd_gpu, { timeout: 999 })
+        var res = await exec(nvidiasmi.cmd_gpu, { timeout: 999 })
         console.log('res=')
         console.log(res)
         var nCard = res.stdout.split("\n").filter(val => val).length
@@ -78,6 +78,8 @@ export async function activate(context: ExtensionContext) {
     context.subscriptions.push(
         workspace.onDidChangeConfiguration(() => {
             nvidiasmi.updateDrawtype()
+            nvidiasmi.updateGPUtype()
+            nvidiasmi.updatenCard()
         })
     )
 
@@ -93,6 +95,9 @@ class NvidiaSmi {
     private _interval: NodeJS.Timer
     private _nCard: number
     private _indicator: string[]
+    private gputype: string
+    private _cmd_gpu: string
+    private _cmd_mem: string
     private _patience: number
     public lock: boolean
 
@@ -101,6 +106,8 @@ class NvidiaSmi {
         this.resetPatience()
         this.nCard = numCard
         this.updateDrawtype()
+        this.updateGPUtype()
+        this.updatenCard()
     }
 
     get hasPatience(): boolean {
@@ -127,6 +134,22 @@ class NvidiaSmi {
         this._indicator = ind
     }
 
+    get cmd_gpu(): string {
+        return this._cmd_gpu
+    }
+
+    set cmd_gpu(cmd: string) {
+        this._cmd_gpu = cmd
+    }
+
+    get cmd_mem(): string {
+        return this._cmd_mem
+    }
+
+    set cmd_mem(cmd: string) {
+        this._cmd_mem = cmd
+    }
+
     public decPatience() {
         if (this.hasPatience) {
             this._patience -= 1
@@ -142,6 +165,31 @@ class NvidiaSmi {
         this.indicator = drawtypes[drawtype]
     }
 
+    public updateGPUtype() {
+        var gputype = workspace.getConfiguration("nvidia-smi").gputype
+        if (gputype == "NVIDIA") {
+            this.cmd_gpu = `nvidia-smi --query-gpu=utilization.gpu --format=csv | sed '1d' | awk -F, '{printf "%i\\n", \$1}'`
+            this.cmd_mem = `nvidia-smi --query-gpu=memory.used,memory.total --format=csv | sed '1d;s/ MiB//g' | awk -F, '{printf "%i\\n", \$1/\$2*100}'`
+        } else if (gputype == "AMD") {
+            this.cmd_gpu = `rocm-smi --alldevices --showuse --csv | sed '1d;$d' | awk -F, '{printf "%i\\n", $2}'`
+            this.cmd_mem = `rocm-smi --alldevices --showmeminfo VRAM  --csv | sed '1d;$d' | awk -F, '{printf "%i\\n", $3 / $2 * 100}'`
+        }
+    }
+
+    public updatenCard() {
+        try {
+            var res = exec(this.cmd_gpu, { timeout: 999 })
+            console.log('res=')
+            console.log(res)
+            var nCard = res.stdout.split("\n").filter(val => val).length
+            if (nCard > 0) {
+                this.nCard = nCard
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     public async updateNvidiaSmi() {
         if (this.nCard == 0) return
         if (this.lock) return
@@ -154,8 +202,8 @@ class NvidiaSmi {
 
         try {
             this.lock = true
-            var res_gpu = await exec(cmd_gpu, { timeout: 999 })
-            var res_mem = await exec(cmd_mem, { timeout: 999 })
+            var res_gpu = await exec(this.cmd_gpu, { timeout: 999 })
+            var res_mem = await exec(this.cmd_mem, { timeout: 999 })
             var levels_gpu = res_gpu.stdout.split("\n").filter(val => val)
             var levels_mem = res_mem.stdout.split("\n").filter(val => val)
             var chars = this.indicator
