@@ -1,6 +1,6 @@
 # Nvidia Status Bar
 
-Elegantly display NVIDIA and AMD GPU utilisation and real memory consumption rate in vscode status bar.
+Elegantly display **NVIDIA** and **AMD** GPU utilisation and real memory consumption rate in vscode status bar.
 
 ## Compact Status Bar
 Display the tens digit of the occupancy rate, or use icons such as bar and pie.
